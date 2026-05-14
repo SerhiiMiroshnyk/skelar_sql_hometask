@@ -65,3 +65,58 @@ JOIN sources_ltv
 USING(source);
 
 
+-- Бонус
+
+WITH monthly AS (
+    SELECT
+        source,
+        date_trunc('month', "date")::date AS month,
+        SUM(spend) AS spend,
+        SUM(registrations) AS registrations
+    FROM marketing_ads
+    GROUP BY source, date_trunc('month', "date")::date
+)
+
+SELECT
+    source,
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-01-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-01-01'), 0)
+    )::numeric, 2) AS "2024-01",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-02-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-02-01'), 0)
+    )::numeric, 2) AS "2024-02",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-03-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-03-01'), 0)
+    )::numeric, 2) AS "2024-03",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-04-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-04-01'), 0)
+    )::numeric, 2) AS "2024-04",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-05-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-05-01'), 0)
+    )::numeric, 2) AS "2024-05",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-06-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-06-01'), 0)
+    )::numeric, 2) AS "2024-06",
+
+    ROUND((
+        SUM(spend) FILTER (WHERE month = DATE '2024-07-01')
+        / NULLIF(SUM(registrations) FILTER (WHERE month = DATE '2024-07-01'), 0)
+    )::numeric, 2) AS "2024-07"
+
+FROM monthly
+GROUP BY source
+ORDER BY source;
+
+
